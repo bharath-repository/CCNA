@@ -1,0 +1,307 @@
+CCNA 200-301 (Swiching and Routing)
+
+Show commands
+
+#show int status
+#show int description
+#show mac address-table
+
+#show running-config
+#show startup-config
+#show int
+#show int g0/0
+#show vlan brief
+
+#show clock
+#show calender
+#show clock detail
+#show ntp associations
+#show ntp status
+
+#show ip route
+#show ip int br
+#show ip protocols
+#show ip dhcp binding
+#show ip dhcp pool
+#show ip ospf database
+#show ip ospf neighbour
+#show ip ospf interface f2/0
+#show ip ospf interface
+#show ip ospf int br
+
+#show standby
+
+Initial configuration
+
+>en or enable
+#conf t or configure terminal
+#show running-config
+#show startup-config
+(config)#enable password CCNA
+(config)#service password-encryption
+(config)#enable secret cisco
+(config)#no service password-encryption
+(config)#exit
+#write
+#write memory
+#copy running-config startup-config
+
+
+Mac Address - Switch 
+
+#show mac address-table
+#clear mac address-table dynamic
+#clear mac address-table dynamic address ABCD.EFGH.1234
+#clear mac address-table dynamic interface Gi0/0
+#show int status
+
+Interface related
+
+>en
+#show interfaces
+#show ip int brief
+#show interfaces description
+#show int g0/0
+
+#conf t
+(config-if)#int g0/0
+(config-if)#description ## to SW1 ##
+(config-if)#ip add 10.255.255.254 255.0.0.0
+(config-if)#no shutdown
+
+(config)#int range f0/3 – 24
+(config)#int range f0/3 – 10, f0/15 – 24
+
+Static Routing
+
+(config)#ip route destination-address mask next-hop
+(config)#ip route 0.0.0.0 0.0.0.0 10.0.0.1
+(config)#ip route destination-address mask exit-interface
+(config)#ip route 192.168.1.1 255.255.255.0 g0/0
+
+Protocols related
+
+#sh ip protocols
+
+Vlan
+
+#sh vlan brief
+
+DHCP
+DHCP Server
+
+#int g0/1
+#ip add 10.1.1.1 255.255.255.0
+#no sh
+#exit
+#conf t
+#ip dhcp pool DHCPSERVER
+#network 10.1.1.0 255.255.255.0
+#default-router 10.1.1.1
+#dns-server 8.8.8.8
+#exit
+#ip dhcp excluded-address 10.1.1.1 10.1.1.10
+#exit
+#sh ip dhcp binding
+#sh ip dhcp pool
+
+DHCP Client
+
+#int g0/2
+#ip address dhcp
+#no sh
+#ping 10.1.1.1
+
+NTP
+
+>en
+#show clock
+#show calender
+#show clock details
+#clock set hh:mm:ss day month year
+#calendar set hh:mm:ss day month year
+#clock read-calendar
+#clock update-calendar
+
+#show ntp associations
+#ntp source interface
+#show ntp status
+
+Dynamic Routing
+
+>en
+#sh ip route
+
+RIP Configuration
+
+#conf t
+#router rip
+#version 2
+#no auto-summary
+#network 10.0.0.0
+#network 172.16.0.0
+
+#conf t
+#router rip
+#passive-interface g0/0
+#default-information originate     ### To share default route info to neighbouring router
+#maximum-paths ?
+#distance ?
+
+EIGRP Configuration
+
+#conf t
+#router eigrp 1                    ### This 1 is represents AS number.
+#no auto-summary
+#passive-interface g2/0
+#network 10.0.0.0
+#network 172.16.0.0
+#eigrp router-id ?
+
+OSPF Configuration
+
+#conf t
+#router ospf ?
+#router ospf 1
+#network 10.0.12.0 0.0.0.3 area 0
+#network 10.0.13.0 0.0.0.3 area 0
+#network 172.16.1.0 0.0.0.15 area 0
+#passive-interface g2/0
+#default-information originate     ### To share default route info to neighbouring router
+#router-id ?
+#maximum-paths ?
+#distance ?
+
+>en
+#clear ip ospf process            ### To clear previous router ID **Not recommended**
+#show ip ospf database
+#show ip ospf neighbour
+#show ip ospf interface ?
+
+Different methods to enable OSPF through network command
+
+Enabling to all ports at once by /0 mask
+#router ospf 4
+#network 0.0.0.0 255.255.255.255 area 0
+
+Specifying IP address with /32 mask
+#router ospf 3
+#network 10.0.13.2 0.0.0.0 area 0
+
+Specifying Network address with network mask
+#router ospf 2
+#network 10.0.12.0 0.0.0.3 area 0
+
+There ways to change OSPF Cost
+
+>en
+#show ip ospf int br
+
+By changing reference bandwidth
+#router ospf 1
+#auto-cost reference-bandwidth ?           ### denoted in mbps
+#auto-cost reference-bandwidth 100000      ### this value should > the fastest connection in the network
+
+By changing individual interface cost manualy
+#int g0/0
+#ip ospf cost ?                           ### manual cost higher priority than auto-cost
+
+By changing individual interface bandwidth    ### Not recommeded
+#int g0/0
+#bandwidth ?
+#bandwidth 1024                              ### denoted in kbps
+
+
+
+Enabling OSPF without entering into OSPF Router mode
+
+#int g0/0
+#ip ospf 1 area 0
+
+Enabling passive interface for all router ports
+
+#router ospf 1
+#passive-interface default
+#no passive-interface g0/0
+
+
+
+
+Configuring HSRP = FHRP
+R1
+#int g0/0
+#standby ?
+#standby version 2
+#standby 1 ip 192.168.1.1           #### Assigning Virtual IP
+#standby 1 priority 200             #### default value = 100 or Higher IP address will become Activer 
+#standby 1 preempt                  #### After a down time R1 will get back Active router again
+
+R2
+#int g0/0
+#standby version 2
+#standby 1 ip 192.168.1.1
+
+#show standby
+#sh ip ospf neighbor
+#sh ip ospf int g0/0
+
+DR and BDR selection
+
+#int g0/0
+#ip ospf priority ?
+#ip ospf priority 255       ### higher priority become BDR
+#ip ospf priority 0         ### Zero priority can't be DR or BDR
+
+
+To clear ospf DB in a particularly router
+
+>en
+#clear ip ospf process
+#show ip ospf neighbor
+
+Serial interface Configuration
+#int s2/0
+#clock rate 64000         ### Bits per second
+#ip add 192.168.1.2 255.255.255.0
+#encapsulation ppp           ### By default encapsulation is HDLC ## Both side should be same
+#no sh
+
+To find DCE or DTE
+>en
+#show controllers s2/0
+
+
+To configure OSPF Netwwork Type
+#int g0/0
+#ip ospf network ?
+
+To shutdown OSPF process
+#router ospf 1
+#shutdown
+
+To run again
+#router ospf 1
+#no shutdown
+
+To change hello and dead timer
+#int g0/0
+#ip ospf hello-interval ?            ### denoted in sec
+#ip ospf dead-interval ?             ### denoted in sec
+
+To OSPF Authentication
+#int g0/0
+#ip ospf authentication-key bharath
+#ip ospf authentication
+
+To change IP MTU value
+#int g0/0
+#ip mtu ?
+#ip mtu 1400
+#no ip mtu 1400    ### denoted in bytes
+
+To see OSPF database
+
+>en
+#sh ip ospf database
+
+
