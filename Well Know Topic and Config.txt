@@ -1,0 +1,46 @@
+Access & Turnk port & Voice
+Router on stick & L3 Switch SVI
+CDP & LLDP
+Etherchannel L2 & L3
+STP Portfast Bpduguard Error Recovery (Rapit pvstp)
+
+
+Floating static route
+OSPF & (FHRP)
+IPv4 and (IPv6)
+
+
+NAT & PAT
+(NTP)
+DHCP
+Console & SSH
+Logging
+
+
+ACL
+(DHCP Snooping & DAI) Port Security
+
+
+0 IPv4 & IPv6 Subnetting
+0 IPv4 & IPv6 Routing table
+1 IPv4
+2 IPv6
+3 VLAN
+4 WLC
+5 Static and Floating Routing
+6 OSPF
+7 NAT
+8 ACL
+9 DHCP, ARP, PORT Security
+10 SDN
+
+
+
+
+
+
+
+
+
+
+ 
