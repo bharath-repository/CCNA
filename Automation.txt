@@ -1,0 +1,242 @@
+Network Automation
+
+* Various tool/methods for network automation
+	1) SDN - Software Defined Network
+	2) Ansible
+	3) Puppet
+	4) Python Scripts
+	
+* Logical Planes
+
+	1) Data Plan or Forward Plan >>> User data being forwarded from one interface to another
+	2) Control Plan >>> It controls the data plan actions and decisions (OSPF, Creating Routing table)
+	3) Management Plan >>> It consists of protocols that are used to manage devices (SSH, Syslog, SNMP, NTP)
+	
+* Logical Plane
+	1) Management traffic processed by CPU
+	2) Data traffic processed by ASIC for the maximum speed
+	ASIC - Application-Specific Intergrated Circuit >>> responsible for switching logic
+	TCAM - Ternary Content-Addressable Memory >>> to find matching MAC address from the table  
+	MAC address table = CAM table
+	
+Software-Defined Networking
+
+@ Centralize the control plane into an application called a controller.
+@ SDN = Software-Defined Architecturen (SDA) = Controller Based Networking
+@ Controller communicate with device using API	
+	
+Southbound Interface - SBI
+
+$ Used for communicate between the controller and network devices it controls
+$ Typically consists of a communication protocol and API
+
+Examples of SBI:
+	1) OpenFlow
+	2) Cisco OpFlex
+	3) Cisco onePK
+	4) NETCONF
+	
+Northbound Interface - NBI
+
+$ Used to communicate with controller, access the data from the controller about network
+$ REST API - is used App to communicate with controller
+$ REST = Represendtational State Transfer
+$ Data = serialized format such as JSON or XML
+
+
+Data Serialization
+
+% convert the data into a standardized format
+
+JSON - JavaScript Object Notation
+
+% Used by REST-API
+% White space is not significant in JSON
+
+
+Primitive data type
+1) String
+2) Number
+3) Boolean
+4) Null
+
+Structured data type
+1) Object
+2) Array
+
+
+XML - Extensible Markup Language
+
+% Used by REST-API
+% White space is not significant in XML
+
+<entry> Data </entry>
+
+YAML - Yet Another Markup Language
+
+% Used by ansible
+% White space is significant in Yaml
+
+REST APIs - Representational State Transfer
+
+* API - Application Programming Interface.
+* CRUD - Create, Read, Update, Delete
+* HTTP Request - use verbs >> POST, GET, PUT, PATCH, DELETE
+* REST APIs typically use HTTP
+* HTTP Request > GET > URI(Uniform Resource Identifier) 
+* HTTP Response > 
+		1xx - Information
+		2xx - Successfull
+		3xx - Redirection
+		4xx - Client Error
+		5xx - Server Error
+
+Six Constraints of Restful architecture
+	1) Uniform interface
+	2) Client server
+	3) Stateless
+	4) Cacheable or non-cacheable
+	5) Layered System
+	6) Code on demand
+	
+REST Stateless
+	# Rest API exchanges are stateless
+	1) Each API exchange is a separate event > independent of past exchanges
+	2) Authentication is required for each event
+	3) TCP - stateful & UDP - stateless Protocol
+	4) Eventhough REST API use HTTP & TCP > it is a stateless
+	
+REST Cacheable or Non-Cacheable
+	$ Caching refers to storing date for future use 
+	$ Not all resources have to be cacheable
+	
+
+Cisco DevNet
+
+^ DNA Center > sandbox > one of the cisco SDN controller
+^ API Calls to DNA center
+
+
+SDN - Software-Defined Network
+
+$ Centralize the control plane into an application called a controller
+$ Controller communicate with device using API
+$ SBI is used for communication between the controller and network devices it controls
+$ NBI is what allows us to interact with controller with our scripts and applications
+
+SDN - Architecture
+
+1) Application layer - Scripts and Application
+2) Control Layer - SDN controller 
+3) Infrastructure Layer - Network device
+
+SDN 
+    > SD-Access > for automating campus LANs > Controller is DNA Centre
+    > ACI (Application centric infratructure) > for automating data centre networks
+    > SD-WAN > for automatic WANs
+    
+
+SD-Access
+   > Underlay - physical network device > eg. Multilayer switch
+   > Overlay - virtual network built on top of Underlay network
+   > fabric - combination or overlay and underlay 
+   > use VXLAN - Virtual Extensible LAN  to build tunnels
+   
+SD-Access Underlay 3 switches roles
+   > Edge nodes - to end hosts > act as a access swiches 
+   > Border nodes - to connect to internet > act as a default gateway
+   > Control nodes - Do control plan action (LISP - Locator ID Separation Protocol)
+   *Brownfield Deployment
+   *Greenfield Deployment
+   
+SD-Access Overlay
+   > EID - Endpoint Identifiers 
+   > RLOC - Routing Locator
+   * Cisco TrustSec (CTS) provides policy control (Qos, Security policy)
+   * VXLAN
+   
+Cisco DNA Centre two main roles
+   * act as a SDN controller
+   * act as a network manager in a traditional network
+   
+   & DNA centre > application > on Cisco UCS server hardware
+   & SBI > supports > NETCONF, RESTCONF, Telnet, SSH, SNMP
+   & IBN - Intent-Based Networking
+
+
+Automation Tools
+  > Ansible
+  > Puppet
+  > Chef
+
+* To avoid configuration drift
+* To do Configuration provisioning
+
+Configuration Management Tools 
+ % To configure large number of new devices
+ % To configure a group of device
+ % To check configuration for compliance with defined standards
+ % To check configuration / soft versions between devices
+
+Ansible
+
+& Redhat > written python > use SSH to push configuration (Port22) > ssh communication protocol
+
+@Playbooks > Blueprints of automation tasks
+@Inventory > Device list and roles
+@Templates > Config file with actual value
+@Variables > config file actual value
+
+Puppet
+
+& Written Ruby > Agent-based > Pupper server is a "Puppet Master" > Pull model > TCP 8140 > Proprietary language for files > https & rest API is the communication protocols
+
+&REST API is used to communicate between device and puppet master
+
+@Manifest > Configuration file
+@Templates > config file's info will be save here
+
+Chef
+
+& Written Ruby > Agent-based > Pull model > TCP 10002 > files use a DSL based on ruby (Domain-Specific Language) > https & rest API is the communication protocols
+
+@Resources > config objects managed by chef 
+@Recipes > Outline the logic and actions of a device
+@Cookbooks > set of related recipes grouped together
+@Run-list > an ordered list to run config file
+
+
+    
+ 
+	
+	
+		 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

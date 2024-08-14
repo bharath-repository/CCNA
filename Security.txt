@@ -1,0 +1,300 @@
+Security Fundamentals
+
+$ Principle of security > CIA
+ 1)Confidentiality
+ 2)Integrity
+ 3)Availability
+ 
+$ Vulnerability, Exploit, Threat, Mitigation
+
+$ Common Attack Types
+ 1)DoS > availability of a system > TCP SYN flood > in complete connection cos this attack
+ 2)DDoS > TCP SYN flood > botnet used
+ 3)Spoofing attacks > fake source address (IP/MAC) > DHCP flood > DHCP Discover message
+ 4)Reflection/Amplification attacks > 
+ 5)Man-in-the-middle attack > ARP Spoofing/ARP poisoning > Confidentiality & Intergrity
+ 6)Reconnaissance attacks > publicly available information > nslookup > whois > 
+ 7)Malware > malicious software > viruses > worms > trojan horses > 
+ 8)Social Engineering attacks > Phishing > spear phishing > whaling > vishing > smishing > watering hole > Tailgating
+ 9)Password-related attacks > Guessing > Dictionary attack > Brute force attack
+ 
+$ Multi-factor authentication
+ #Something you know
+ #Something you have
+ #Something you are
+ 
+$ Digital certificates
+ # Entities send CSR to CA > CSR-Certificate Signing Request, CA-Certificate Authority
+
+$ Controlling and monitoring users with AAA
+$ ISE - Identity Services Engine > Cisco's AAA server
+$ AAA - Protocols
+  1)RADIUS > Open standard > UDP 1812/1813
+  2)TACACS+ > Cisco's > TCP 49 
+  
+$ Security Program Elements
+ >User awareness
+ >User training
+ >Physical access control
+ 
+ 
+Port Security
+
+^Feature of cisco switch > control allowed MAC address > by default only one MAC is allowed
+^can allow know MAC address
+^can restrict number device per interface
+     
+Violation Modes
+
+    1) Shutdown > 'err-disabled' > Shutdown the interface > Only once Generate Syslog & SNMP message > violation counter 1
+    2) Restrict > Discards traffic from unauthoried MAC > interface is Not disabled > Each time will send Syslog & SNMP message > violation counter is incremente by 1 each time
+    3) Protect > Discards traffic from unauthoried MAC > interface is Not disabled > Not generate any message > not increment the violation counter
+    
+    
+Secure MAC address aging
+
+  @ By default secure MAC address will not "age out"
+
+Aging type 
+
+  1) Absolute > By default > Based on timer > once timer expiry > will relearn the MAC
+  2) Inactivity > Based on each frame > reset the timer for each and every from received
+  
+
+Sticky Secure MAC address
+
+>>> Once enable this > Dynamically learned MAC address >> added >> running config >> Manual >> save >> starup config
+
+
+DHCP snooping
+
+ #filter DHCP message > on untrusted ports
+ #by default all ports are untrusted ports
+ #other network message & traffic is not affected
+ 
+ @Uplink ports > Trusted ports
+ @Downlink ports > Untrusted ports
+ 
+ DHCP attacks
+  #DHCP Stravation > spoofed MAC address to flood DHCP discover messages > CHADDR=Client Hardware Address => MAC
+  #DHCP Poisoning (Man-in-the-middle) > Spurious server > impersonating like default gateway/router
+  
+ DHCP Message > dhcp snooping filter message > differentiates between dhcp server & dhcp client messages
+  %DHCP server messages > 
+   >Offer
+   >Ack
+   >Nak = used to decline a client request
+  
+  %DHCP Client
+   >Discover
+   >Request
+   >Release = used to tell the server that the client no longer needs its ip address
+   >Decline = used to decline the ip address offered by a dhcp server
+   
+  %DHCP DORA process
+   > Discover
+   > Offer
+   > Request
+   > Ackowledge
+   
+DHCP Snooping Operation
+
+1) On trusted Port > DHCP message without inspection
+2) On Untrusted Port > DHCP server message will be droped
+		     > DHCP client message will be inspected 
+		     	1)check source MAC & CHADDR if match = forward if not discard
+		     	2)check source IP address & DHCP Snooping Binding Table Match = forward if not discard
+
+*By default all ports were untrusted
+
+--------------------------------------------
+Dhcp snooping 
+
+Prevent 
+Man in the middle 
+Dhcp starvation 
+
+By doing 
+Trusted and untrusted ports 
+Check the untrusted port dhcp offer message and drop it
+DHCP messages DHCPACK, DHCPNAK, DHCPOFFER originating from a DHCP server that is not trusted
+-----------------------------------------------
+
+DHCP Snooping Rate-Limiting
+
+
+
+Dynamic ARP Inspection
+
+ %All ports are untrusted by default
+ %Trusted = connection between switches and router 
+ %Untrusted = connection towards end hosts
+
+ARP Poisoning (Man in the Middle)
+
+-----------------------------------------------
+Dynamic arp inspection 
+Prevent 
+Man in the middle
+Arp snooping 
+Actually
+Attacker will copy Gateway MAC and act as a Rouge Gateway
+Attacker will copy client mac and act as a client 
+Trusted and untrusted Port
+In untrusted Port 
+1) checks dst mac is match with target mac or not 
+Match equal forward
+Unmatch equal drop 
+2) check for dst mac in dhcp snooping table 
+If found Matching entry equal forward
+Unmatch equal drop
+
+DHCP snooping reads the lease information from the switch (which is a DHCP client) and from this information creates the DHCP snooping database. This database is a mapping between IP address and VLAN-MAC pair. For each VLAN-MAC address pair, the database stores the corresponding IP address
+
+----------------------------------------------
+
+
+Standard Access Control lists - ACL
+
+	ACL Logic
+	ACL Types
+	
+	
+	ACL from a security perspective > function as a packet filter/ instructing the router 
+	to permit or discard specific traffic 
+	
+	ACL can filter traffic based on Source/Destination IP address, source/destination
+	Layer 4 ports, etc.
+	
+	ACL > configured globally on the router > Ordered Sequence of ACE (Access Control
+	Entries) > ACL must be applied to an interface > applied either inbound or outbound
+	
+Implicit deny
+	> There is an implicit deny at the end of all ACLs
+	> The implicit deny tell the router to deny all traffic that doesn't match any of the 
+	configured entries in the ACL.
+	
+ACL Types
+	1)Standard ACL > Match based on source IP address Only
+		1)Standard Numbered ACL
+		2)Standard Named ACL
+	2)Extended ACL > Match based on source/destinations IP, Port, etc
+		1)Extended Numbered ACL
+		2)Extended Named ACL
+		
+		
+Standard Numbered/Named ACL
+	>Standard ACL can use 1-99 and 1300-1999
+	>Standard Named ACL has few advantage over numbered ACL.
+		1) Can delete any specific ACL entry from a list of entries - using seq number
+		2) Can add ACL entry where ever we want - using sequence number
+		
+Re-sequencing ACL 
+	>Helps to edit ACL entry.
+	
+
+Extended Numbered/Named ACL
+	>Numbered ACL use the following ranges 100-199, 2000-2699
+	>They are processed from top to bottom just like standard ACLs.
+	
+IP protocol number
+	> this value you can find inside a IP packet header field
+	> Protocol number
+		1)ICMP
+		6)TCP
+		17)UDP
+		88)EIGRP
+		89)OSPF
+		
+Well known ports
+TCP
+FTP - 20(data)
+FTP - 21(control)
+SSH - 22
+Telnet - 23
+SMTP - 25
+HTTP - 80
+POP3 - 110
+HTTPS - 443
+
+UDP
+DHCP - 67(server)
+DHCP - 68(client)
+TFTP - 69
+SNMP - 161(agent)
+SNMP - 162(manager)
+Syslog - 514
+
+TCP&UCP
+DNS - 53
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+		     	 
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+ 
+ 
+
+
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     

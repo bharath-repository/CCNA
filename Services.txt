@@ -1,0 +1,424 @@
+NTP - Network Time Protocol
+	Manual time configuration
+	NTP basics
+	NTP configuration
+	
+	NTP use port = 123 UDP to communicates
+	Stratum 0 = reference clock
+	Stratum 1 = 1 NTP server layer (Primary servers)
+	Stratum 2 = 2 NTP server layer (Secondary servers)
+	
+	
+DNS = Domain Name System
+	Use port 53 UDP/TCP >>> Standard DNS query uses UDP >>> TCP used when the message size is more than 512bytes
+	
+DHCP = Dynamic Host Configuration Protocol
+	DHCP server use >>> UDP port 67
+	DHCP client use >>> UDP port 68
+	
+	DORA - Discover, Offer, Request, Ack
+	
+	Discover > Client to Server > Broadcast
+	Offer > Server to Client > Broadcast or unicast
+	Request > Client to server > Broadcast
+	Ack > Server to client > Broadcast or unicast
+	
+	Release > Client to server > Unicast
+	
+DHCP Relay agent
+	Helps DHCP client to get IP address from different subnet
+	Used in large Enterprise network 
+
+SNMP = Simple Network Management Protocol
+	It is used to monitor the status and make configuration changes
+	There are two main type of device in SNMP
+		1)Managed Device > Device managed by SNMP > switches and routers
+		2)Network Management Station (NMS) > SNMP server
+		
+	SNMP OID's >> Object IDs = iso, identified organization, dod, internet, mgmt, mib-2, system, sysName
+	SNMP agent =UDP 161
+	SNMP manager =UDP 162
+		
+SNMP Operations
+	1) Managed device can notify NMC of events (NMS = Network Monitoring Software)
+	2) NMS can ask managed device to share the current state
+	3) NMS can change the configuration for managed device
+	
+	1)MIB = Management Information Base
+	2)SNMP manager
+	3)SNMP Agent
+	
+SNMP Versions
+SNMPv1 >> Original version of SNMP
+SNMPv2c >> Retrieve large amounts of info in a single request
+SNMPv3 >> Strong encryption and Authentication
+	
+SNMP Messages
+Read > Get, GetNext, GetBulk > from NMS to Agent
+Write > Set > from NMS to Agent
+Notification > Trap (no Ack), Inform (Ack) > from Agent to NMS
+Response > Response > both send to each other response message when needed
+
+
+Syslog
+
+Message Format
+seq:time stamp: %facility-severity-MNEMONIC:description
+
+Severity Levels (Every Awesome Cisco Engineer Will Need Ice Daily)
+0 > Emergency > System is unusable
+1 > Alert     > Immediate action needed
+2 > Critical  > Critical conditions
+3 > Error     > Error conditions
+4 > Warning   > Warning conditions
+5 > Notice    > Normal but significant condition
+6 > Informational > Informational messages
+7 > Debugging > Debug-level messages
+
+Logging locations
+1)Console line > By default display all messages (0-7)
+2)VTY lines > By default disabled
+3)Buffer > syslog messages will be saved to RAM, By default all messages (0-7)
+4)External Server > server will receive messages on UDP 514, network device will send the syslog messages to external server
+
+SSH
+
+Console port security
+Layer 2 switch management IP
+Telnet tcp 23 and SSH tcp 22
+
+Console port security - Login
+	> By default = no password required
+
+Secure Shell - SSH
+	> v1, v2 
+	> Provides security feature such as data encryption and authentication
+	> if we use both version in a device means it is like v1.99
+	> Must configure hostname and domain name before enabling ssh
+	
+
+TFTP (Trivial File Transfer Protocols)
+	> TFTP > Only allows a client to copy a file to or from a server
+	> TFTP > No authentication, No ecryption > UDP 69
+	> TFTP > every data message will receive ack message from client to server wise versa
+	> TFTP Three Phases
+		1)Connection
+		2)Data transfer
+		3)Connection termination
+		
+FTP
+	>TCP 20 & TCP 21
+	>username and password used, No encryption
+	>FTPS (FTP over SSL/TLS) can be used
+	>SFTP (SSH FTP)
+	>FTP Control connection TCP 21
+	>FTP data connection TCP 20
+	>FTP passive mode > client behind the firewall initiates the connection
+			  > firewall will block the connection initiated by outside server
+			  
+			
+IOS File systems
+
+	>nvram = used to store = file in the network device 
+	>network = used to store = file in the ftp like connected device storage
+	>opaque = is a special file system type
+	
+Static NAT
+Source NAT translating source IP address of the device
+Static NAT 
+>static configuration involved one to one mapping of local IP address to public IP address
+>inside local = actual device IPv4 address
+>inside global = after NAT preformed the assigned public IP address for a local device
+
+Dynamic NAT
+	>Router dynamically maps inside local address to inside global address as needed
+	>still here we are using one to one mapping to public ip address > leads to NAT pool 
+	exhaustion 
+	
+PAT (NAT Overload)
+	> Translates both IP address and port numbers (if necessary)
+	
+IP Phones
+	>IP Phones > has 3-port switch > one uplink, one down link, one to connect internal
+	>Allows PC to connect via IP Phones
+	>Recommended to separate voice traffic and data traffic by placing vlans
+	
+PoE
+	>PSE = Power Sourcing Equipments to provide power to PD=Powered Devices over an
+	 Ethernet cable
+	 
+QoS (Quality of Service)
+	>is used to priorities between network traffic like voice traffic and data traffic
+	
+	1)Bandwidth = Overall capacity of the link, can reserve certain amount of bandwidth
+		      for certain type of traffic
+	2)Delay = one-way delay > time take to travel from source to destination
+		= two-way delay > time take to travel from source to destination plus
+			          destination to source
+	3)Jitter = the variation in one way delay between packets send by the same application
+	4)Loss = percentage of packets don't reach their destination
+	
+	Recommended for acceptable voice call
+	1)one-way delay: 150ms or less
+	2)Jitter: 30ms or less
+	3)Loss:1% or less
+	
+	QoS - Queuing
+	
+	1)Tail Drop	
+	>By default packet forward to destination FIFO (first in first out) = if the queue is 
+	full the next coming all packet will be discarded. It's called tail drop
+	2)TCP global synchronization
+	>all sending device will decrease the sending speed = Under utilization
+	>then gradually all sending device will increase the sending speed = Over utilization
+	>To avoid under/over utilization 
+		!)TCP sliding window functionality helps to device to increase and decrease 
+		network traffic flow depending upon the network congestion 
+	
+	3)RED (Random Early Detection)
+	>To overcome these two problems RED (Random Early Detection) is used to drop specific 
+	traffic. so that all other traffic will flow seamlessly.
+	>Standard RED all traffic are the same priority
+	
+	4)Weighted Random Early Detection (WRED)
+	>Allows us to control which type of traffic dropped first and second and third 
+	
+QoS
+
+Classification & Marking
+Queuing & Congestion
+Shaping & Policing
+
+Classification
+	-Categories traffic
+	-ACL = traffic permitted by ACL will get different treatment then packet dropped by
+	ACL
+	-NBAR = Network Based Application Recognition = perform deep packet inspection beyond 		 
+	layer 4 like upto layer 7  
+
+	-PCP = Priority code point = 802.1q tag can find this field in dot1Q tag frame in a 
+	vlan tag. Used to priorities the traffics (layer 2)
+	Also know as CoS = Class of Service
+
+	-DSCP = Differential service code point = used for identifying the high/low priority 
+	traffic (layer3) = also called IP ToS Bytes
+	= DSCP+ECN(Explicit Congestion Notification)
+	-DSCP = 6-Bits = 64values
+	-IPP = IP Precedence, 6,7=Network traffic (exp: OSPF message between routers), 5=voice
+	4=video, 3=voice signaling, 0=Best effort
+	
+	DF = Default Forwarding
+	EF = Expedited Forwarding
+	AF = Assued Forwarding
+	CS = Class selector
+	
+QoS
+
+Classification & Marking
+Queueing & Congestion
+Shaping & Policing
+
+Classification
+-Categories traffic
+-ACL = traffic permitted by ACL will get different treatment then packet dropped by ACL
+-NBAR = Network Based Application Recognition = perform deep packet inspection beyond layer 4 like upto layer 7 
+-PCP = Priority code point = 802.1q tag can find this field in dot1Q tag frame in a vlan tag. Used to priorities the traffics (layer 2)
+Also know as CoS = Class of Service
+-DSCP = Differentiate service code point = used for identifying the high/low priority traffic (layer3) = also called IP ToS Bytes
+= DSCP+ECN(Explicit Congestion Notification)
+
+ToS
+- 6 bits for DSCP 
+- 2 bits for ECN
+
+DSCP
+
+Few marking is been standardized (all vendor and ISP agreed up on this)
+
+1) Default forwarding (DF) - Best effort traffic
+
+2) Expedited Forwarding (EF) - low loss/latency/ jitter traffic (usually voice)
+
+3) Assured Forwarding (AF) - A set of 12 standard values
+
+4) Class selector (CS) - A set of 8 standard values provides backward compatibility with IPP
+
+DSCP Value 0 for normal traffic
+DSCP Value 46 for voice traffic
+
+AF 43 = DSCP 38
+Given after to DSCP = 8(X)+2(Y)
+
+AF41 = Gets the best treatment
+AF13 = Gets the lowest treatment
+	
+CS (Class Selector)	
+	Backward compatibility with IPP 
+	
+RFC 4954
+	>voice traffic: EF
+	>interactive video: AF4x
+	>Streaming video: AF3x
+	>High Priority data: AF2X
+	>Best effort: DF
+	
+Trust Boundaries
+
+Queuing/Congestion Management
+	how queuing works in a router (By examining the DSCP value of the traffic router 
+	decide the which queue to choose for a traffic)
+	>Input traffic > routing > classify the traffic > put the traffics in the appropriate 
+	queue > then scheduler will send as per the available schedule of an interface > and 
+	Interface will transmits the traffic.
+	
+	>weighted round-robin is a common scheduling method
+	
+	>CBWFQ = (Class-Based Weighted Fair Queuing) > uses > weighted round-robin scheduler
+	>each queue will use certain percentage of the interface bandwidth during congestion.
+	
+LLQ (Low Latency Queuing)
+	>designates one or more queue as strict priority queue
+	>means > scheduler also send the traffic from the priority queue is empty
+	>this method is useful for voice/video traffic
+	
+Shaping and Policing
+	>used to control the rate of traffic
+	>Shaping buffers traffic in a queue if the traffic rate goes over the configured rate.
+	>Policing drops traffic if the traffic rate goes over the configured rate. The amount
+	burst traffic allowed is configurable. > Both cases classification can be used to 
+	allow for different rates for different kinds of traffic.
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	

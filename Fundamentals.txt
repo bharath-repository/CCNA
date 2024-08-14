@@ -1,0 +1,302 @@
+Network Topology Architectures
+
+	1) Star
+	2) Full Mesh
+	3) Partial Mesh
+	
+PoE Normal standard - 2003 - 30watts power out
+PoE+ - IEEE 802.3bt - 2018 - 90watts power out - 10/100/1000mbps - 100meters
+     - IEEE 802.3bz -      - 90watts power out - 2.5Gbps to 5Gbps - 100meters
+
+
+3-Tier Architecture
+
+1) Core L3 Router 		- Doing high speed/backbone/redundancy 
+2) Aggregation L3 Switch 	- Doing routing/filtering/qos 
+3) Access L2 Switch 		- Doing connecting end devices
+
+2-Tier Architecture/Collapsed Core
+
+1) Collapsed Core L3 Switch	- Doing core/aggregation task
+2) Access L2 Switch 		- Doing connecting end devices
+
+
+2-Tier Spine Leaf Architecture
+
+1) Core L3 Router 		- Doing high speed/backbone/redundancy 
+2) Aggregation L3 Switch 	- Doing routing/filtering/qos & Mostly server end device connectivity
+				- Avoid STP
+				- Higher East-West traffic
+				- No downtime while changing device
+				- Reduced hop count better performance
+	
+Two-Tier Campus LAN Design
+
+	1)Access Layer > End host to connnects > PCs, Printers, Cameras > Switch has more ports > QoS > PoE > Port security, DAI
+	2)Distribution Layer > Aggregates connection from access layer switch > Border between Layer 2 & Layer 3 > Internet, WAN
+	
+Three-Tier Campus LAN Design
+
+	1)Access Layer
+	2)Distribution Layer
+	3)Core Layer > Connects Distribution Layer together in large LAN Network > Fast Transport > CPU intensive operation should be avoided at this layer > connection are layer 3 > 						 Maintain redundancy
+	
+Spine-Leaf Architecture
+	
+	1)Leaf switch connected to spine switch
+	2)Spine switch connected to Leaf switch
+	3)Leaf switch is not connected to leaf switch
+	4)Spine switch is not connected to spine switch
+	5)End host connected with leaf switch
+	6)Randomly choosen path > Balance traffic
+	7)Every end host has same number of hops except same switch end hosts
+
+SOHO
+
+	% Router, Switch, Firewall, Wireless Access Point, Modem	
+	
+
+WAN - Architectures
+
+	Extends over large geographic area > Geographically separate LANS > VPN used to create private WAN connections
+
+	1) WAN over dedicated connection (Leased Line) > Dedicated physical link > use serial connection (PPP or HDCL encapsulation) > High cost, High installation time, Slower speed 
+	2) WAN connection via Ethernet (Fiber)
+	3) WAN over shared infrastructure (Internet VPN) > Single Homed, Dual Homed, Multihomed, Dual Multihomed
+	
+MPLS - Multi Protocol Label Switching -WAN connection via Ethernet (Fiber)
+	& Layer 2.5 > MPLS label is kept between L2 address and L3 address header 
+	& CE router = Customer Edge Router, PE = Provider Edge router, P router = Provider core router
+	& PE router add the MPLS label > CE Router don't run MPLS label
+	1) Layer 3 MPLS VPN > CE and PE router peer using OSPF > ISP share routing table to CE
+	2) Layer 2 MPLS VPN > CE and PE router don't form peering > ISP router act as a big switch between CE routers
+	
+Internet VPNs
+	1) Site to Site VPNs using IPsec > Encrypt the normal IP packet > append > VPN header, New IP header > create IPsec VPN Tunnel > Sending device combine original packet & session key & runs them through encryption formula > Tunnel is create between two router from different sites
+		
+		Limitations > 
+		can't do broadcast and multicast > only unicast > resolved by GRE over IPSec
+		full mesh tunnel > is labor intensive task > resolved by Cisco DMVPN 
+		
+		1) GRE over IPsec > Generic Routing Encapsulation > it will encapsulate the GRE info >
+		Don't encrypt the info > 
+		Normal packet > GRE info > IPSec Info
+		
+		2) DMVPN > Dynamic Multipoint VPN > allows routers to dynamically create a full mesh of
+		IPsec tunnels 
+	
+	2) Remote-access VPNs using TLS > use to access the company service from end device securely > Transport Layer Security > TLS VPN tunnel > 
+	
+	
+Virtualization
+
+	1) Type 1 Hypervisor > Run directly on hardware > Like Microsoft Hyper-V, VMware ESXi > used in 
+	data centre
+	2) Type 2 Hypervisor > Run on a OS system > VMware workstation, Oracle VirtualBox > used in 
+	personal use
+	
+	> Host OS > Guest OS
+	> Partitioning , Isolation, Encapsulation, Hardware independence
+ 
+
+Cloud Services
+	
+	1) On-Premises > all servers and infrastructure are located on company property
+	2) Colocation > all server and infrastructure are located on data centre but configuration maintained by company
+	
+	Five essential characteristics of cloud
+	1)On demand self service
+	2)Broad network access
+	3)Resource Pooling
+	4)Rapid elasticity
+	5)Measured service
+	
+	Three service models of cloud
+	1)Software as a service > Microsoft Office 365, Google Gmail
+	2)Paltform as a service > AWS Lambda & Google app engine
+	3)Infrastructure as a service > Google compute Engine & Amazon EC2 > Most control to customer
+	
+	Four deployment models of cloud
+	1)Private cloud
+	2)Community cloud
+	3)Public cloud
+	4)Hybrid cloud
+	
+	Connecting to cloud resources
+	1)Private WAN Service Provider
+	2)Internet
+	3)IPSec VPN Tunnel
+	
+
+Wireless Topologies
+
+1) Infrastructure mode
+2) Ad-hoc mode or Independent BSS
+
+AP Architectures
+1) Autonomous AP
+2) Cloud Based AP
+3) Lightweight AP
+
+Wireless Authentication Methods
+1)Open wireless network
+2)Shared key authentication
+
+Shared key authentication methods
+1)Wep
+2)Wpa
+3)Wpa2
+4)Wpa3
+
+Wireless Encryption Methods
+1)Temporal Key Interity Protocol
+2)Advanced Encryption Standard
+3)The Galois/Counter Mode Protocol
+
+WLC Deployments
+1)Unified 
+2)Cloud-based 
+3)Embedded 
+4)Mobility Express 
+	
+
+Wireless Fundamentals
+
+	> IEEE 802.11 
+	> All device within range receive all frames
+	> CSMA/CA = Carrier Sense Multiple Access With Collision Avoidance > Wireless network
+	> CSMA/CD = Detect and recover from collisions. > wired network
+	> Absorption > Reflection > Refraction > Diffraction > Scattering
+	> Signal = Amplitude, Frequency, Period
+	
+	Channels
+	>2.4GHz - channels > 1, 6, 11 > honeycomb pattern
+	>5GHz - 802.11ac > consist of non-overlapping channels
+	>6GHz - 802.11ax 
+	
+	Service Sets
+	>Independent > Ad hoc network > example Airdrop, Share_it > device directly connected to each other without AP
+	>Infrastructure > BSS > device connected to AP > BSA > ESS >
+	>Mesh > MBSS > Main provide connectivity to client AP through wireless connection > simply a mesh network > RAP > MAP
+	
+	Operational Modes - AP
+	1) As a repeater > receive singal via wireless > transmit via wireless
+	2) As a work group bridge > receive signal via wireless > transmit via wire
+	3) As a Outdoor bridge > signal transmited and receive using antennas over long distance
+	
+	
+IEEE 802.11 messages/frame format
+	1) Frame Control, Duration/ID, Address(DA, SA, RA, TA), Squence Control, Qos Control, HT, FCS
+	2) Probe req, Probe res > Authentication req, Authentication res > Association req, Association res
+	3) Active scanning (Probe req,res), Passive scanning (Beacon mes from AP to end device)
+	4) Message type > Management(Probe req res, Becon, auth, association), control (RTS, CTS ACK), data
+	
+AP Deployment methods
+	1) Autonomous > Configured individually	> Local MAC architecture
+	
+	2) Lightweight > Management, Security, Qos, Roaming controlled by WLC > split MAC-Architecture 
+		>Configure centrally > Digital certificates (X.509 Standard certificates) >CAPWAP >
+		Control tunnel uses UDP port 5246 > Data tunnel uses UDP port 5247 > Bydefualt it is 
+		not encrypted > But we can encrypt using DTLS > Datagram Transport Layer security
+		
+		> Local mode > Defualt mode > offer BSS > controller and AP are in same location
+		> Flex connect > Offer One or more BSS > If WLC is down > It route the traffic locally
+		> Sniffer > Don't offer BSS > Capturing traffic and send it to wireshark 
+		> Monitor > Don't offer BSS > Help to find rogue device and eliminate from AP
+		> Rogue Detector > Don't use RF signal > wire > listen ARP message > to detect rogue device
+		> SE-Connect (Spectrum Expert connect) > Don't offer BSS > used to analysis spectrum
+		> Bridge/Mesh > Lightweight AP > dedicated bridge between sites
+		> Flex Plus Bridge  
+		
+	3) Cloud-based
+		> Centrally managed in cloud 
+		> Cisco Meraki dashboard > Management traffic only go to cloud > user traffic directly 
+		forwarded to destination > to pc > to internet
+
+------------------------------------------------
+Wireless Topology
+1) Infrastructure 
+2) Adhock
+3) Mesh
+
+AP Architecture 
+1) Autonomous AP
+2) Cloud Based AP
+3) Lightweight AP
+
+Lightweight AP 
+LAP – Lightweight Access Point
+WLC – Wireless Lan Controller
+LWAPP – Lightweight Access Point Protocol
+CAPWAP – Control and Provisioning Wireless Access Points
+UDP 5246 Control
+UDP 5247 Data
+
+Split MAC Address 
+LAP
+1) Becon and probe
+2) Encryption and decryption 
+3) packet ack and retransmission 
+4) Queueing and priority 
+
+WLC
+1) Authentication 
+2) Roaming reauthorization 
+3) switch between protocol 
+4) converting to wired network
+
+--------------------------------------------------------------
+
+WLC Deployments
+	1)Unified >WLC hardware > central location of the network > 6000 AP
+	2)Cloud-based >WLC is a VM running on a server > 3000 AP
+	3)Embedded >WLC is integrated within a switch > 200 AP
+	4)Mobility Express >WLC is intergrated within an AP > 100 AP
+	
+
+Intro to wireless network security
+Authentication Methods
+Encryption/Integrity methods
+Wifi Protected Access (WPA)
+
+Authentication Methods
+	1)Open Authenticaion > Client send auth req > AP accepts all req > not secure
+	2)WEP - (Wired Equivalent Privacy) > provides auth & encryption > uses RC4 algorithm for encryption
+	3)EAP - (Extensible Authentication Protocol) = 802.1X > Supplicant, Authenticator, Authentication server > RADIUS server
+	4)LEAP - (Lightweight EAP) = client & server both send challenge phrase to each other, authenticate using username and password
+	5)EAP-FAST - (EAP Flexible Authenctication Via Secure Tunneling) = 1) Protected Access Credential 2) Encrypted TLS Tunnel 3) Authentication
+	6)PEAP (Protected EAP) = 1)Digital cert 2)Encrypted TLS tunnel 3) Authenticate
+	7)EAP-TLS (EAP Transport Layer Security) = 1)Digital Certificates from Both end 2)Encrypted TLS tunnel
+	
+
+Encryption methods
+	1)TKIP (Temporal Key Integrity Protocol) = Advanced version of WEB, Used in WPA ver1
+	2)CCMP (Counter/CBC-MAC Protocol) = Used in WPA2 > 1)AES (counter mode = Encryption), 2) CBC-MAC (Cipher Block Chaining Message Authentication Code) MIC = Message integrity check
+	3)GCMP (Galois/Counter Mode Protocol) = Used in WPA3 > 1)AES 2) GMAC for MIC
+	
+WPA - Wireless Protect Access
+	1)WPA > TKIP, 802.1X
+	2)WPA2 > CCMP, 802.1X
+	3)WPA3 > GCMP, 802.1X > PMF (Protected Management Frames) > SAE (Simultaneous Authentication
+	of Frames = protect 4way handshake when using personal mode auth) > Forward secrecy (Prevent 
+	data from being decrypted after it has been transmitted over the air)
+	
+	1)Personal mode = PSK-pre shared key used to auth > use four way handshake
+	2)Enterprise mode = 802.1x is used with auth server (RADIUS server)
+	
+Wireless Configuration
+
+	 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,296 @@
+Network switching techniques
+	1)Circuit switching - satellite com -  dedicate path b/w device
+	2)Packet switching - internet - transmit over the network independently
+	3)Message switching - Before packet switching we used it - now no more
+	
+Network switching methods
+	1)Store-and-forward - Here the switch will store entire frame and > forward
+	2)Cut-and-through   - Here the switch will until it receive dest MAC > forward
+	3)Fragment-free     - Here the switch will until it receive 64byte > forward
+
+VLANs - Virtual Local Area Networks
+	What is a LAN
+	Broadcast Domains
+	What is VLAN
+	Configure VLANs on Cisco Switch
+	
+VLANs - Virtual Local Area Networks
+	What is trunk port
+	Purpose of trunk ports
+	802.1Q Encapsulation = VLAN tagging 
+	Configure trunk port
+	Router on a stick (ROAS)
+	
+	802.1Q Tag
+		1)TPID - Tag Protocol Identifier > 16bits, 0x8100 value set always > 
+			 meaning dot1Q
+		2)TCI - Tag Control Information
+			1)PCP -Priority code Point > 3 bit CoS - Class of Service - used 
+			for prioritizes	the traffic
+			2)DEI - Drop Eligible Indication > 1bit - indicate - 
+			        can be dropped if the 
+			network is congested
+			3)VID - Vlan ID > 12bits - identifies the VLAN 
+			
+		Native VLAN
+			Native Vlan should match between switches trunk ports
+			VLAN 1 is by default native VLAN
+			
+		
+		
+VLANs - Virtual Local Area Network
+	Native vlan on a router
+	wireshark analysis
+	Layer 3 switching/Multilayer switching
+	
+	DTP (Dynamic Trucking Protocol)
+	VTP (VLAN Trunking Protocol)
+	
+	Inter-Vlan Routing Via SVI - Switch Virtual Interface
+	
+	
+DTP, VTP - Dynamic Trunking Protocol, VLAN Trunking Protocol
+
+
+STP - Spanning Tree Protocol
+	Redundancy in networks
+	1) To avoid Broadcast storms
+	2) To avoid MAC address flapping
+	
+	Classic Spanning Tree Protocol is IEEE 802.1D
+	
+STP - Spanning Tree Protocol
+	To prevent loop - placing redundant ports in a blocking state
+	1) Interfaces in a forwarding state behave normally
+	2) Interfaces in blocking state only allow BPDUs = Bridge Protocol Data units
+	3) All port on the root bridge in a forwarding state 
+	
+	Root Bridge selection
+		1) By default -- Lowest MAC switch become -- root bridge of the network
+		
+	Root Port selection
+		1) Lowest root cost
+		2) Lowest neighbor bridge ID
+		3) Lowest neighbor port ID
+
+
+STP - Spanning Tree Protocol =  STP will run in a switch by default
+	STP states
+		Blocking = stable, 
+		forwarding = stable, 
+		listening=transitional, 
+		Learning=transitional
+		
+		Blocking state
+		>Non-designated ports are in a blocking state
+		>Interface in blocking state = helps us prevent loops = don't send/receive regular traffic
+		>Interface in blocking state receive BPDUs. don't forward STP BPDUs. don't learn MAC
+		
+		Listening state
+		>Designated and root port in listening state
+		>Listening state is 15 sec long by defualt > set by forward delay timer
+		>Listening state interface only send/receive STP BPDUs > do nothing with regular traffic > it doesn't learn about MAC from regular traffic
+		
+		Learning state
+		>After the listening state, a designated or root port will enter the learning state.
+		>Listening state is 15 sec long by defualt > set by forward delay timer
+		>Interface > Only send/receive STP BPDUs > don't send/receive regular traffic
+		>Interface > Learns > MAC address from regular traffic
+		
+		Forwarding state
+		>Root and Designated ports are in a forwarding state
+		>Interface in the forwarding state operate as normal
+		>Interface send/receive normal traffic, BPDUs, Learns MAC address
+		
+		A port in the forwarding state performs as follows:
+		•Forwards frames that are received from the attached segment
+		•Forwards frames that are switched from another port for forwarding
+		•Incorporates station location information into its address database
+		•Receives BPDUs and directs them to the system module
+		•Processes BPDUs that are received from the system module
+		•Receives and responds to network management messages
+		
+		
+	STP Timers
+		>Hello = Often the root bridge send the hello BPDUs = every 2 seconds
+		>Forward delay switch will stay in listening and learning states = 30secs
+		>Max Age = How long an interface will wait after ceasing to receive Hello BDPUs to change the STP topology. = 20secs
+		
+		
+	STP BPDU
+		
+	
+	STP Optional features
+		>Portfast >Portfast = used for end host ports only > it will change the port directly from blocking to forwarding state
+		>BPDU Gaurd
+	
+	STP configuration
+	
+STP (802.1D) Port State - Disabled -> Blocking -> Listening -> Learning -> Forwarding
+
+RSTP (802.1w) Port State - Discarding -> Learning -> Forwarding
+	
+	
+Rapid spanning Tree Protocol
+
+	1) Comparison of STP versions (Standard vs cisco)
+	2) Rapid PVST+ = Rapid Per Vlan Spanning Tree Plus = Encapsulation with dot1q
+	
+	RSTP Port states
+	1)Discarding
+	2)Learning
+	3)Forwarding
+	
+	RSTP Port Roles
+	1)Root
+	2)Designated
+	3)Alternate
+	4)Backup
+	
+	RSTP Optional feature	
+	1) Portfast = used for end host ports only > it will change the port directly from blocking to forwarding state
+	2) UplinkFast = helps to move immediate to forwarding = from alternate port to root port
+	3) BackboneFast =  
+	
+	Protocol version identifire in STP = 0
+	Protocol version identifire in Rapid STP = 2
+	
+	Classic STP > root bridge only generate BPDUs
+	Rapid STP > All switch will generate BPDUs
+	
+	All switches running Rapid STP send own BPDUs every Hello time (2 seconds)
+	Classis STP > wait for 10 hello intervals 2seconds * 10intervals = total 20 sec 
+	Rapidd STP > wair for 3 hello intervals 2sec*3interval = 6sec, then flush all MAC address learned on that interface
+	
+	Industry standards (IEEE)
+		Spanning tree protocol (802.1D)
+			> the original STP
+			> all Vlan share one STP instance > so can't load balance
+		
+		Rapid spanning tree protocol (802.1W)
+			> Much faster at converging/adapting to network changes than 802.2D
+			> all Vlan share one STP instance > so can't load balance
+			
+		Multiple spanning tree protocol (802.1S)
+			> uses modified RSTP mechanics.
+			> can group mutiple vlans into different instance (1-5 vlan instance 1, 6-10 in instance 2) = can perfor load balancing for large networks
+			
+	
+	Cisco versions
+		Pre-Vlans Spanning Tree Plus
+			> Each Vlan has different instances = can do load balance
+		
+		Rapid Per-Vlan Spanning Tree Plus
+			> cisco upgrade to 802.1w
+			> Each Vlan has different instances = can do load balance
+		
+	RSTP Link Types
+		1)Edge = for end host > moves directly to forwarding
+		2)Point to Point = a direct connection between two switches
+		3)Shared = a connection to a hub, must operate in half-duplex mode
+		
+		
+Ether Channel = Port channel = Link aggregation group
+
+	Configuring Layer 2/ Layer 3 Etherchannels
+	LACP = Link Aggregation Control Protocol
+	Port selection calculations done by Source MAC and Destination MAC
+	Up to 8 interfaces can be formed into a single etherchannel.
+	In LACP allows upto 16 interfaces but only 8 will be active the other 8 will be in standby mode
+
+	There are three methods of ether channel configuration.
+	
+		1)PAgP (Port Aggregation Protocol) > Cisco Proprietary protocol > Dynamically negotiates the creation/maintenance of the etherchannel
+		>auto+auto = no etherchannel
+		>desirable+auto=etherchannel
+		>desirable+desirable=etherchannel
+		
+		2)LACP (Link Aggregation control protocol) > IEEE 802.3ad > Dynamically negotiates the creation/maintenance of the etherchannel.
+		>passive+passive=no etherchannel
+		>active+passive=etherchannel
+		>active+active=etherchannel
+		
+		3)Static Etherchannel > Interfaces are statically configured to form an etherchannel
+		>on+on=etherchannel
+		>on+desirable= no etherchannel
+		>on+active=no etherchannel
+		
+
+Layer 3 Etherchannel
+
+
+Layer 2 Discovery Protocols (CDP & LLDP)
+CDP - is a cisco proprietary protocol
+	>CDP - Cisco Discovery Protocol
+	>CDP messages are periodically sent to Multicast MAC address 0100.0CCC.CCCC
+	>CDP messages are sent once every 60 sec by default
+	>CDP messages isn't receive from neighbour CDP holdtime is 180 sec after that 
+	neighbour will removed from CDP neighbour table
+	>CDP has version1 and version2 > by default we are using version2
+	
+		
+LLDP - is a industry standard protocol (IEEE 802.1AB)
+	>LLDP - Link Layer Discovery Protocols
+	>By default disable on cisco devices
+	>A device can run CDP and LLDP at the same time
+	>LLDP messages are periodically sent to Multicast MAC address 0180.C200.000E
+	>LLDP messages are sent once every 30 sec by default
+	>LLDP messages holdtimer is 120 sec
+	
+	
+	
+	
+
+	 
+	
+	
+	 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			
+	
+			
+	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		
+		
+		
+	
+		
+		
+		
+		
+		
+	
+
+	
+
+
+	
+	
+	
+	

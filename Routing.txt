@@ -1,0 +1,350 @@
+Routing
+	1)Static Routing
+	2)Dynamic Routing
+
+Routing Priority
+	-longest prefix length
+	-small administrative distance
+	-small metrix = cost
+	
+Dynamic Routing
+
+-Interior Gateway Protocol - Within a Single AS
+-Exterior Gateway Protocol -  Between Different As
+IGP - Distance Vector - RIP
+                      - EIGRP
+    - Link State - OSPF
+                 - IS-IS
+EGP - Path vector - BGP
+
+Administrative Distance
+
+Directly connected/Linked - 0
+Static - 1
+eBGP - 20
+EIGRP - 90
+IGRP - 100
+OSPF - 110
+IS-IS - 115
+RIP - 120
+EIGRP (external) - 170
+iBGP - 200
+Unusable route - 255
+
+RIP - Routing information protocol
+
+Multicast address 224.0.0.9
+Distance vector - IGP - Routing by rumor logic to learn and share
+Uses Hop count as its metric. Max hop count is 15.
+RIPv1, RIPv2 for IPv4
+RIPng for IPv6
+Request and Response
+Default share the routes every 30sec
+
+EIGRP - Enhanced Interior Gateway Routing Protocol
+
+* Multicast address 224.0.0.10
+* Only IGP that can perform Unequal-cost load-balancing
+* Use wildcard mask. It is a invert of regular subnet mask
+
+OSPF - Open Shortest Path First
+
+* ECMP - Equal Cost Multi-Path
+* Metric value
+* Administrative distance 
+* Link state routing protocol, Connectivity map
+* advertises same network map for all router
+* Shortest Path First algorithm / Dijkstra's algorithm
+* v1 - not in use *v2 - IPv4 *v3 - IPv6
+* LSAs - Link State Advertisements
+* LSDB - Link State DateBase
+* Internal router - single area
+* ABR - Area Border Router - Between areas
+* ASBR - Autonomous System Boundary router
+* Backbone Router - Area 0 Router
+* Intra-area route - same ospf area
+* Inter-area route - different ospt area 
+
+OSPF cost
+@ metric = cost = calculated based on the bandwidth of the interface
+@ cost = reference bandwidth / interface bandwidth
+@ default reference bandwidth = 100mbps
+@ In ospf any value <1 will be converted into =1
+@ FastEthernet, Gigabit Ethernet, 10Gig Ethernet all are equal cost = 1 with reference bandwidth of 100
+
+OSPF Neighbors
+$ Every 10s Hello Multicast message send to 224.0.0.5 = to find ospf neighbor
+$ 40sec is dead timer for hello message
+
+Different state of neighbors
+%Down > R1,R2 send hello message 224.0.0.5 
+%init > Share Router ID with each other
+%2-way > R1,R2 will have both Router ID's
+%Exstart > (Higher RID become master, Lower RID become slave) DBD - Database description packet
+%Exchange > Exchange LSA information > outline
+%Loading > LSR,LSU, LSAck > share the LSA information
+%Full > all router will have same LSDB
+
+
+
+OSPF Network Types
+& Broadcast > Ethernet and FDDI
+& Point to Point > PPP and HDLC
+& Non-Broadcast > Frame Relay and X.25
+
+OSPF Broadcast network type
+*Hello message > 224.0.0.5
+*DR,BDR,DROther
+
+First election
+$ DR-Designated Router  > Port with high priority or Higher Router ID Become DR
+$ BDR-Backup Designated Router > Second highest become BDR
+$ Once DR down > BDR become next DR immediately 
+
+Second election
+255 Higher priority become BDR
+0 priority can't be DR or BDR
+By default ospf port priority for all ports is = 1
+
+
+! DR & BDR > FULL State > with all routers in the subnet
+! DROther > 2WAY  State > with other DROthers in the subnet
+! DROther > FULL State > with DR/BDR in the subnet
+! DR and BDR send multicast messages using 224.0.0.6
+
+OSPF Point to Point network type
+% Since it is a point to point connection no need DR and BDR
+
+Serial connection
+%DCE > Data Communication Equipment > Need to set clock rate
+%DTE > Data Temination Equipment
+
+OSPF Neighbor requirements
+@ Should be in same area
+@ Should be in same subnet
+@ Should not shutdown ospf process
+@ Router ID should be unique
+@ Hello and Dead timer should match
+@ Authentication settings must match
+@ IP MTU setting must match  > can become neighbor > but doesn't operate properly > 1500bytes
+@ OSPF network type must match
+
+OSPF LSA type
+Type 1 > Router LSA
+Type 2 > Network LSA
+Type 5 > AS External LSA
+
+
+First Hop Redundancy Protocols
+
+*Virtual IP and Virtual MAC
+*Active Router and Standby Router OR Active router and Active Router
+*Virtual IP act as a default gateway for the LAN
+*Active router replies for the ARP Requests
+*When switching from standby to active mode the router notify switch using gratuitous ARP message
+*If the old active router comes back online. It will become standy router by default
+*But we can configure the preemption.
+
+1)HSRP - Hot Standby Router Protocol - Cisco Proprietary
+2)VRRP - Virtual Router Redundancy Protocol
+3)GLBP - Gateway Load Balancing Protocol
+
+HSRP - Hot Standby Router Protocol
+-Cisco Proprietary
+-Active and Standby
+-Version 1 and Version 2
+-Version 2 supports IPv6 and more of default gateway can be created
+-Multicast IPv4 V1 = 224.0.0.2
+		V2 = 224.0.0.102
+-Virtual MAC address v1=0000.0c07.acXX (HSRP group number)
+	 	     v2=0000.0c9f.fXXX (HSRP group number)
+-Active and Standby router = Hello 3Sec & Hold time 10Sec
+-we can configure different active router for different subnet/VLAN to load balance.	 	 
+
+VRRP - Virtual Router Redundancy Protocol
+-Open standard
+-Master and Backup 
+-Multicast IPv4 = 224.0.0.18
+-Virtual MAC address = 0000.5e00.01XX (VRRP group number)
+-We can configure different master router for different subnet/VLAN to load balance.
+
+GLBP - Gateway Load Balancing Protocol
+-Cisco Proprietary
+-Load balances among multiple routers withing a single subnet
+-Multicast IPv4 = 224.0.0.102
+-Virtual MAC address = 0000.5e00.XXYY (xx = GLBP group number, yy = AVF number)
+-An AVG (Active virtual gateway) is elected
+-One AVG can have 4 AVF(Active Virtual Forwarders) (AVG itself can be an AVF)
+-AVF act as a default gateway for a portion of the hosts in the subnets
+
+
+TCP - Tramission Control Protocol
+
+* End host to End host - Connection-oriented
+* Reliable data transfer - Destination host must ack 
+* Data sequence - Sequence number in the TCP header
+* Error control
+* Flow control - Destination host can feedback about the data flow to source 
+
+#Identify application layer protocols
+#Support session multiplexing
+
+IANA = Internet Assign Number Authority
+Well Know Ports = 0 - 1023
+Registered ports = 1024 - 49151
+Dynamic/Private ports = 49152 - 65535
+
+TCP Header
+
+1) Source & Destination Ports
+2) Sequence number and Ack Number
+3) Flag Bits - Ack, Syn, Fin & (Window Size - Flow control)
+
+Establishing TCP connection - Three way handshake
+
+1) Syn flag - From server 1
+2) Syn flag, Ack Flag From server 2
+3) Ack flag - From server 1
+
+Terminating TCP connection - Four way handshake
+
+1) Fin flag - From server 1
+2) Ack flag - From server 2
+3) Fin flag - From server 2
+4) Ack flag - From server 1
+
+UDP - User Datagram Protocol
+
+* Not Connection-oriented
+* doesn't provide reliable communication
+* doesn't provide the sequencing
+* doesn't provide flow control
+
+TCP - Downloading file
+UDP - Voice and Video call
+
+
+IPV6 Addressing
+
+* 128 Bit address
+
+Global Unicast Address (Public IPv6 Address)
+
+* Can be used over internet
+* Has 64-Bits for Host portion
+* Has 48-Bits for Network portion
+* Has 16-Bits for IPv6 subnets 
+* 2000::/3 to 3FFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF
+* Currently starts with "2000"
+
+Unique Local Address (Private IPv6 Address)
+
+* Can't be used over internet
+* FC00::/7 (FC00:: to FDFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF)
+* Currently starts with "FD"
+
+Link Local Address (Automatically Generated)
+
+* It will automatically generated on IPv6-enabled interface
+* FE80::/10 (FE80:: to FEBF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF)
+* Currently starts with "FE8"
+
+Multicast Address
+
+* FF00::/8 (FF00:: to FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF)
+* IPv6 doesn't use broadcast But it is actived by multicast
+
+Multicast Address Scopes
+
+* Interface-local > FF01
+* Link-local > FF02
+* Site-local > FF05
+* Organization-local > FF08
+* Global > FF0E
+
+Anycast Address
+
+* One to One of Many
+* In a network few Routers will have same ip address = Which alow the router to take shortest path 
+for the routing as per the metric
+
+EUI-64
+
+* Extended Unique Identifire
+* Use 48-Bit Interface MAC address in host portion
+	1) Seperate the 48-Bit Mac address into two half
+	2) Replace FFFE in the middle
+	3) Change the 7th-Bit from 0 to 1 or 1 to 0 
+	
+Other IPv6 Address
+
+* "::"  >> Unspecified address
+* "::/0"  >> this is like in ipv4 0.0.0.0 >>> Default route configuration
+* "::1"  >> this is like in ipv4 127.0.0.0/8 >>> Loopback address
+
+
+IPv6 Repesentation
+
+# must use lower case letter
+# must "0" portion with "::"
+# must from left to right priority for this same length "0" to make "::"
+# only once we allowed to use "::"
+
+IPv6 Header > 40 bytes
+
+& Version > 4 bits
+& Traffic Class > 8 bits > QoS > IP phone traffic, Live video call, etc will give priority over other traffic
+& Flow label > 20 bits > communication between a specific source and destination
+& Payload Length > 16 bits > the encapsulated layer 4 segment > 
+& Next Header > 8 bits > indicates the type of the next header for example TCP or UDP (payload - header)
+& Hop Limit > 8 bits > same function as the ipv4 header's TTL field.
+& Source / Destination address > 128 bit > each > IPv6 address
+
+Solicited-Node Multicast Address
+
+* solicited-node multicast address - calculated from a unicast address
+* "ff02::1:ff" + "Last 6 hex digits of unicast address"
+
+NDP - Neighbor discovery protocol
+
+ ARP = NDP
+ ICMPv6 to use like ARP
+
+# Two message type
+	1) Neighbor Solicitation (NS) = ICMPv6 Type 135  >> like ARP Request >>> is a multicast 
+	2) Neighbor Advertisement (NA) + ICMPv6 Type 136 >> like ARP Reply >>> is a unicast
+	
+# NDP allows hosts to automatically discover routers on the local network.
+	Two message type
+	1) Router Solicitation (RS) = ICMPv6 Type 133 >> multicast address FF02::2 (All routers)
+	2) Router Advertisement (RA) = ICMPv6 Type 134 >> multicast address FF02::1 (All nodes) >> respone to RS message
+
+# SLAAC >> Stateless Address Auto-configuration
+	1) Learn prefix length using RS/RA message
+
+NDP >>> DAD - Duplicate Address Detection
+
+@ When router port is enabled >> it will send a NS message to the port IPv6 address 
+	>if it doesn't get a reply >> it is unique
+	>if it does get a reply >> router this IPv6 address is a duplicate
+
+
+IPv6 Static Routing 
+
+! By dafult ipv6 routing is disabled. Must enable ipv6 routing manually
+
+1) Directly attached static route
+2) Recursive static route
+3) Full specified static route
+4) Floating Static route = This routes AD value should be higher than main route AD value
+
+Note: 
+	* Directly attached static route wouldn't work in IPv6
+	* Directly attached static route works with IPv4
+
+
+
+
+
+
+
