@@ -1,0 +1,536 @@
+Show commands
+
+#show clock
+#show clock detail
+#show logging
+#show ntp associations
+#show ntp status 
+#show version
+#show ip ssh
+#show file systems
+#show flash
+#show hosts >>>>>>> DNS
+#show ip dhcp binding
+#show ip dhcp pool
+#show ip nat translations
+#show ip nat statistics
+
+
+Configure SSH in router
+
+#conf t
+#ip domain-name knight
+#username knight password knight
+#crypto key generate rsa
+>>>>>enter 1024<<<<<<<
+#line vty 0 15
+#login local
+#transport input ssh
+
+
+Configure DHCP server
+
+#conf t
+#service dhcp
+#ip dhcp pool DHCP_SERVER
+#network 192.168.1.0 255.255.255.0
+#default-router 192.168.1.1
+#dns-server 8.8.8.8
+
+Configure DHCP Client
+
+#conf t
+#int g0/1
+#ip address dhcp
+
+Configure DHCP relay
+
+#int g0/0
+#ip dhcp-helper 10.0.0.1
+
+
+
+NTP
+
+#show clock
+#show clock detail
+#show logging
+#show ntp associations
+#show ntp status 
+
+Manually configure software clock/time
+
+>en
+#clock set ?
+#clock set HH:MM:SS DD MMM YYYY
+#clock set 14:23:45 10 Jan 2023
+
+Manually configure Hardware clock/time
+
+>en
+#calendar set HH:MM:SS DD MMM YYYY
+#calendar set 14:23:45 10 Jan 2023
+
+To sync the calendar to the clock
+
+#clock update-calendar >>> sync the hardware clock to software clock (main)
+#clock read-calendar  >>> sync the software clock to hardware clock (main)
+
+Configre the Time Zone
+
+#conf t
+#clock timezone ?
+#clock timezone JST 9
+
+Daylight Saving Time (Summer Time)
+
+#conf t
+#clock summer-time EDT recurring 2 Sunday March 02:00 1 Sunday November 02:00
+#clock summer-time <timezone> recurring <week number> <star of day light saving> <end of day light saving>
+
+
+NTP - Network Time Protocol - Configure a router as a client from google time server
+
+#conf t
+#ntp server 216.239.35.0 prefer
+#ntp server 216.239.35.4
+#ntp server 216.239.35.8
+#ntp server 216.239.35.12
+
+NTP service to update the hardware clock
+
+#conf t
+#ntp update-calendar
+
+NTP - Network Time Protocol - Configure a router as a time server (R1)
+
+#int loopback0
+#ip add 10.1.1.1 255.255.255.255
+#exit
+#ntp source loopback0
+
+
+NTP - Network Time Protocol - Configure a router as a client (R2)
+
+#conf t
+#ntp server 10.1.1.1
+#do show ntp associations
+#do show ntp status
+
+Configure NTP server mode
+
+#conf t
+#ntp master
+
+Configuring NTP symmetric active mode
+
+R2
+#conf t
+ntp peer 10.0.23.2
+
+R3
+#conf t
+#ntp peer 10.0.23.1
+
+
+Configuring NTP Authentication
+
+R1
+#ntp authenticate
+#ntp authentication-key <key-number> md5 <key>
+#ntp trusted-key <key-number>
+
+R2
+#ntp authenticate
+#ntp authentication-key 1 md5 jeremysitlab
+#ntp trusted-key 1
+#ntp server 10.0.12.1 key 1
+#ntp peer 10.0.23.2 key 1
+
+R3
+#ntp authenticate
+#ntp authentication-key 1 md5 jeremysitlab
+#ntp trusted-key 1
+#ntp server 10.0.12.1 key 1
+#ntp peer 10.0.23.1 key 1
+
+
+
+
+DNS - Domain Name system
+
+Windows PC
+>ipconfig /all
+>ipconfig /displaydns
+>ipconfig /flushdns 
+
+Windows PC DNS entry
+c:>windows>System32>drivers>etc>hosts
+
+DNS in cisco Router - act as a server
+
+#config t
+#ip dns server               >>>> To DNS server functionality
+#ip host R1 192.168.0.1      >>>> Make mapping hostname/ip
+#ip host PC1 192.168.0.101   >>>> Make mapping hostname/ip
+#ip host PC2 192.168.0.102   >>>> Make mapping hostname/ip
+#ip host PC3 192.168.0.103   >>>> Make mapping hostname/ip
+
+DNS client setup in cisco router > in this case router will do external DNS query
+
+#ip name-server 8.8.8.8      >>>> If the info not in the above list router will start to look external DNS server
+#ip domain lookup	     >>>> To enable the external DNS queries (By default it will work)
+#show hosts
+
+
+DHCP - Server
+
+#conf t
+#service dhcp
+#ip dhcp excluded-address 192.168.1.1 192.168.1.10
+#ip dhcp pool DHCP_SERVER
+#network 192.168.1.0 255.255.255.0
+#default-router 192.168.1.1
+#dns-server 8.8.8.8
+#domain-name dhcp.com
+#lease 0 5 30 or #lease days hours minutes or lease infinite
+
+#exit
+#int g1/0
+#ip add 192.168.1.1 255.255.255.0
+#no sh
+#exit
+#do wr
+#show ip dhcp binding
+
+DHCP Relay Agent 
+
+#int g0/1
+#ip helper-address 192.168.10.10 or ip helper-address <dhcp server ip address>
+
+DHCP client
+
+#int g0/1
+#ip add dhcp
+
+
+
+Syslog configuration
+
+#conf t
+#logging console (severity level number or keyword)
+#logging console 6 >>> this will display 6 and higher severity level in console
+
+Network device
+#logging monitor 6 >>> this will display 6 and higher severity level in ssh/telnet SSH connection terminal device
+#terminal monitor >>> this will start the message dispaly in the ssh terminal
+
+#logging buffered 8192 6 >>> Not recommended here 8192 is memory size will used from RAM
+
+#logging 192.168.1.100 >>> to an external server
+#logging host 192.168.1.100 >>> to an external server same as previous command
+#logging trap 7 >>> to select severity level
+
+To avoid logging massage display in the middle of typing the command
+#int console 0
+#logging synchronous
+
+Log massage sequence number and date/time configuration
+#conf t
+#service timestamps log datetime
+#service sequence-numbers
+
+
+
+Console Password Protection
+
+Configuring password for console & Assign console to use local username and password for login
+#conf t
+#line console 0
+#exec-timeout 3 30  >>> if terminal is inactive after 3mins and 30sec it will logout automatically 
+#password ccna
+#login local        >>> local username and password to login
+#logging synchronous >> to avoid logging message breaking the command while we type the command
+#exit
+
+L2 Management IP
+
+Assign Management IP to L2 switch
+#conf t 
+#int vlan1
+#ip add 192.168.1.253 255.255.255.0
+#no sh
+#exit
+#ip default-gateway 192.168.1.254
+
+Telnet configuration
+#conf t
+#enable secret ccna
+#username ccna secret cisco
+#line vty 0 15
+#login local
+#exec-timeout 5 0
+#transport input telnet
+
+Client side remote login
+>telent (ip-address)
+
+
+
+SSH (Secure Shell)
+>en
+#show version
+#show ip ssh
+
+Configuring RSA Keys
+#conf t
+#ip domain name cisco.com
+#crypto key generate rsa
+#crypto key generate rsa modulus (key length)
+#crypto key generate rsa modulus 1024
+#do show ip ssh
+
+Configuration VTY lines
+#enable secret ccna
+#username cisco secret bharath
+#ip ssh version 2
+#line vty 0 15
+#login local
+#exec-timeout 5 0
+#transport input ssh
+
+To allow both telnet/ssh
+#transport input telnet ssh
+#transport input all
+
+Client side remote login
+>ssh -l (username) (ip-address)
+>ssh (username)@(ip-address)
+
+
+Ios file systems
+#show file systems
+#show flash
+
+
+
+TFTP
+Copying files from TFTP server & Client side commands
+#copy tftp: flash:
+ask you to enter tftp server IP address?
+ask you to enter source file name to copy?
+ask you to enter destination file name?
+
+Upgrading cisco ios
+#show flash
+#conf t
+#boot system flash:xxxxx.bin
+#exit
+#write memory
+#reload
+
+To delete a file
+>en
+#delete flash:xxxxx.bin
+
+FTP
+#conf t
+#ip ftp username cisco
+#ip ftp password ccna
+#exit
+#copy ftp: flash:
+ask you to enter ftp server IP address?
+ask you to enter source file name to copy?
+ask you to enter destination file name?
+
+
+
+Static NAT
+
+#int g0/0
+#ip nat inside
+#int g0/1
+#ip nat outside
+#exit
+#ip nat  inside source static 192.168.0.50 100.0.0.1
+#ip nat inside source static 192.168.0.51 100.0.0.2
+#show ip nat translations
+# clear ip nat translations *
+#show ip nat statistics
+
+Dynamic NAT
+
+#int g0/0
+#ip nat inside
+#int g0/1
+#ip nat outside
+#exit
+#access-list 1 permit 192.168.0.0 0.0.0.255
+#ip nat pool POOL1 100.0.0.0 100.0.0.255 prefix-length 24
+#ip nat inside source list 1 pool POOL1
+#show ip nat translations
+#show ip nat statistics
+
+PAT configuration (Pool - Creation)
+
+#int g0/0
+#ip nat inside
+#int g0/1
+#ip nat outside
+#exit
+#access-list 1 permit 192.168.0.0 0.0.0.255
+#ip nat pool POOL1 100.0.0.0 100.0.0.3 prefix-length 24
+#ip nat inside source list 1 pool POOL1 overload
+#show ip nat translations
+#show ip nat statistics
+
+PAT configuration (interface)
+
+#int g0/0
+#ip nat inside
+#int g0/1
+#ip nat outside
+#exit
+#access-list 1 permit 192.168.0.0 0.0.0.255
+#ip nat inside source list 1 interface g0/1 overload
+
+IP Phones / Voice VLAN
+#conf t
+#int g0/0
+#switchport mode access
+#switchport access vlan 10
+#switchport voice vlan 11
+#exit
+#show int g0/0 switchport
+#show int trunk
+#show int g0/0 trunk 
+
+
+PoE
+
+#conf t
+#int g0/0
+#power inline police
+#power inline police action {log | errdisabled}
+#end
+#show power inline
+#show power inline police      ------------To see actual drawing power from the port
+#show power inline police g0/0
+
+#power inline police action log
+#show power inline police g0/0
+
+QoS
+#conf t
+#class-map TEST
+#match dscp ?
+
+To reset the port configuration
+
+>en
+#conf t
+#default interface g0/0
+
+Clear commands in cisco
+
+>en
+#clear ip dhcp binding
+#clear ip ospf process
+#clear mac address-table dynamic {}
+#clear lldp counter
+#clear lldp table
+#clear port-security {all | configured | dynamic | sticky }
+#clear ip nat translation *
+
+
+
+To set Zero subnet
+
+conf t
+ip subnet-zero
+
+To Update time from Internet
+
+#conf t
+#clock timezone SGT 8
+#ntp server time.google.com
+#show clock details
+
+To Delete router configuration or factory reset
+
+>en
+#erase starup-config
+#write erase
+#reload
+
+To Break into cisco router without password
+
+#on the router
+#press ctrl + B or ctrl + Break
+rommon>confreg 0x2142  --------------- for break mode
+#power cycle the router
+#press "no" for auto configuration
+>en
+#show running-configuration
+#conf t
+#config-register 0x2102 -------------- for normal mode
+#power cycle the router
+
+To avoid domain lookup or wrongly enter command dns lookup
+
+#conf t
+#no ip domain-lookup
+(After this command console/terminal will provide = unable to find the address)
+
+To Configure Secondary IP for an interface
+
+primary
+(config-if)#ip add 192.168.1.1 255.255.255.0
+
+secondary
+(config-if)#ip add 192.168.2.1 255.255.255.0 secondary
+(config-if)#ip add 192.168.3.1 255.255.255.0 secondary
+(config-if)#ip add 192.168.4.1 255.255.255.0 secondary
+
+
+To add static mac (Mac address binding for a SW port) address to the table
+
+SW1(config)#mac address-table static 001d.a18b.36d0 vlan 1 interface fastEthernet 0/1
+
+Static Null0 Route to discard the traffic on a router
+
+MainRouter(config)#ip route 192.168.0.0 255.255.240.0 Null0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

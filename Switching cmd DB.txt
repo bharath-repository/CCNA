@@ -1,0 +1,500 @@
+Show commands
+
+#show vlan brief
+#show interface trunk
+#show interface status
+#show interface g0/0 switchport
+#show vtp status
+#show spanning-tree
+#show etherchannel summary
+#show etherchannel load-balance
+#show etherchannel port-channel
+#show cdp
+#show cdp traffic
+#show cdp interface
+#show cdp neighbours
+#show cdp neighbours detail
+#show cdp entry R2
+#show cdp entry *  
+#show lldp
+#show lldp traffic
+#show lldp interface
+#show lldp neighbours
+#show lldp neighbours details
+#show lldp entry (neighbour hostname)
+#show lldp entry SW1
+
+
+
+To add a port into a vlan
+
+>en
+#show vlan brief
+#conf t
+
+#int range g1/0 - 3
+#switchport mode access
+#switchport access vlan 10
+
+To create a vlan and rename vlan
+
+#conf t
+#vlan 20
+#name Networking
+#do show vlan brief
+
+
+Turnk Ports Configuration - Switch 1
+
+SW1(config)#inf g0/0
+#switchport trunk encapsulation dot1q
+#switchport mode trunk
+
+To allow Vlan on a trunk port
+
+#int g0/0
+#switchport trunk allowed vlan 10,30
+
+To configure native vlan
+#int g0/0
+#switchport trunk native vlan 1001
+
+Turnk Ports Configuration - Switch 2
+
+#int g0/0
+#switchport trunk encapsulation dot1q
+#switchport mode trunk
+#switchport trunk allowed vlan 10,30
+#switchport trunk native vlan 1001
+#do show int trunk
+
+Router on a Stick (ROAS)
+
+#int g0/0
+#no sh
+#int g0/0.10
+#encapsulation dot1q 10
+#ip add 192.168.1.62 255.255.255.192
+#int g0/0.20
+#encapsulation dot1q 20
+#ip add 192.168.1.126 255.255.255.192
+int g0/0.30
+encapsulation dot1q 30
+ip add 192.168.1.190 255.255.255.192
+
+
+
+DTP - Dynamic Trunking Protocol
+
+#switchport mode dynamic dersirable >>> active change for trunk
+#switchport mode dynamic auto >>> passive change for trunk depends on neighbour switch
+#show interface g0/0 switchport
+#switchport nonegotiate >>> will disable the DTP >>> best practice 
+#switchport trunk encapsulation negotiate >>> enable DTP
+
+
+VTP - VLAN Trunking Protocol - operates server mode by default
+
+#show vtp status
+#vtp domain cisco
+#vlan 10
+#name engineering
+#exit
+
+VTP - Client configuration
+
+#vtp mode client
+#vlan 20 >>> can't pass the command cos switch in client mode it will receive from server
+
+VTP - Transparent mode
+
+#vtp mode transparent
+#vtp domain knight
+
+
+
+
+
+
+
+SPT - Spanning tree protocol
+
+#show spanning-tree
+
+Portfast
+
+#int g2/0
+#spanning-tree portfast
+
+To enable portfast on all access ports (not trunk ports)
+#conf t
+#spanning-tree portfast default
+
+BPDU guard
+
+#int g2/0
+#spanning-tree bpdugurad enable
+
+To enable BPDU Grard on all portfast-enabled interface
+
+#spanning-tree portfast bpduguard default
+
+Loop guard
+
+#conf t
+#spanning-tree loopguard default --------- to enable for entire switch
+
+#int fa0/1
+#spanning-tree guard loop
+
+Root guard
+
+#conf t
+#int fa0/2
+#spanning-tree guard root *******Note******* if root guard is enabled on a loop guard - enabled port loop guard will be automatically disabled*********
+
+
+
+Configure the spanning tree mode
+
+#conf t
+#spanning-tree mode ?
+#spanning-tree mode pvst
+
+Manually configure the primary root bridge
+
+#conf t
+#spanning-tree vlan 1 root primary
+#do show spanning-tree
+
+spanning-tree vlan 750 primary 0
+
+Spanning-tree vlan 750 Root primary
+
+Manually configure the secondary root bridge
+
+#conf t
+#spanning-tree vlan 1 root secondary
+#do show spanning-tree
+
+Configure STP port settings
+
+#int g3/0
+#spanning-tree vlan 1 ?
+#spanning-tree vlan 1 cost|port-priotity
+
+
+Rapid Spanning Tree Protocol
+#conf t
+#spanning-tree mode ?
+#spanning-tree mode mst|pvst|rapid-pvst
+#spanning-tree mode rapid-pvst
+#do show spanning-tree
+
+RSTP Link Type: Edge
+#int g3/0
+#spanning-tree portfast
+
+RSTP Link Type: Point to Point = By default it will work
+#int g3/0
+#spanning-tree link-type point-to-point
+
+RSTP Link Type: Shared
+#int g3/0
+#spanning-tree link-type shared
+
+
+
+
+
+
+
+
+
+Etherchannel
+
+To configure load balancing mode
+
+#show etherchannel load-balance
+#conf t
+#port-channel load-channel ?
+#port-channel load-channel src-dst-mac
+
+To configure a interface to be part of an etherchannel
+PAgP
+LACP
+Static
+
+PAgP Configuration
+
+#int range g3/0-4
+#channel-group 1 mode ?
+#channel-group 1 mode desirable
+
+#conf t
+#do show ip int br
+
+LACP Configuration
+
+#int range g3/0-4
+#channel-group 1 mode ?
+#channel-group 1 mode active
+
+Static Etherchannel configuration
+
+#int g3/0-4
+#channel-group 1 mode ?
+#channel-group 1 mode on
+
+#int g3/0-4
+#channel-protocol ?
+#channel-protocol lacp
+
+Etherchannel + Vlan trunking port configuration
+
+#int port-channel 1 or #int po1
+#switchport trunk encapsulation dot1q
+#switchport mode trunk
+#do show interface trunk
+
+#show etherchannel summary
+#show etherchannel port-channel
+
+
+Layer 3 Etherchannel configuration
+
+#int range g0/0-3
+#no switchport
+#channel-group 1 mode active
+
+#int po1
+#ip add 10.0.0.1 255.255.255.252
+
+#do sh etherch sum
+#do sh ip int br
+
+CDP
+
+#show cdp
+#show cdp traffic
+#show cdp interface
+#show cdp neighbours
+#show cdp neighbours detail
+#show cdp entry R2
+#show cdp entry (name)
+
+To enable/disable CDP
+#conf t
+#cdp run
+#(no) cdp run
+
+To enable/disable CDP on specific interface
+#int g0/0
+#cdp enable
+#(no) cdp enable
+
+CDP timer
+#conf t
+#cdp timer (seconds)
+#cdp holdtime (seconds)
+
+CDP enable/disable v2
+#conf t
+#(no) cdp advertise-V2
+#cdp advertise-V2
+
+LLDP
+
+#show lldp
+#show lldp traffic
+#show lldp interface
+#show lldp neighbours
+#show lldp neighbours details
+#show lldp entry (neighbour hostname)
+#show lldp entry SW1
+
+To enable LLDP globally
+#conf t
+#lldp run
+
+To enable LLDP in a interface to transmit
+#conf t
+#int g0/0
+#lldp transmit
+
+To enable LLDP in a interface to receive
+#conf t
+#int g0/0
+#lldp receive
+
+LLDP timer
+#conf t
+#lldp timer (sec)
+#lldp holdtime (sec)
+#lldp reinit (sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

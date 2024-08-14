@@ -1,0 +1,225 @@
+Show Commands
+
+#show interface status
+#show interface g0/1 switchport
+#show port-security interface g0/1
+#show port-security
+#show errdisable recovery
+#show mac address-table secure
+#show ip dhcp snooping binding
+#show ip arp inspection interface
+#show ip arp inspection
+#show access-lists
+#show ip access-lists
+#show ip interface g0/0
+
+Enabling Port Security > shutdown violation mode
+
+#conf t
+#int g0/1
+#switchport port-security
+#switchport mode access
+#do show int g0/1 switchport
+#switchport port-security
+#exit
+#show port-security interface g0/1
+#show interface status
+
+Re-enabling an interface - manually
+
+#conf t
+#int g0/1
+#shutdown
+#no shutdown
+
+Re-enabling an interface - ErrDisable Recovery
+
+>en
+#show errdisable recovery
+#conf t
+#errdisable recovery cause psecure-violation
+#errdisable recovery interval 180
+
+
+Enabling Port Security > Restrict violation mode
+
+#int g0/1
+#switchport port-security
+#switchport port-security mac-address 000a.000a.000a
+#switchport port-security violation restrict
+#show port-security interface g0/1
+
+Enabling Port Security > Protect violation mode
+
+#int g0/1
+#switchport port-security
+#switchport port-security mac-address 000a.000a.000a
+#switchport port-security violation protect
+#show port-security interface g0/1
+
+Secure MAC address aging
+
+#int g0/1
+#switchport port-security aging time 30
+#switchport port-security aging type inactivity
+#switchport port-security aging static
+
+Sticky Secure MAC address
+
+#int g0/1
+#switchport port-security
+#switchport port-security mac-address sticky
+
+#no switchport port-security mac-address sticky ####---- will disable the port from learning sticky mac-address----#####
+
+
+DHCP Snooping
+
+#conf t
+#ip dhcp snooping
+#ip dhcp snooping vlan 1
+#no ip dhcp snooping information option
+#int g0/0
+#ip dhcp snooping trust
+#exit
+#show ip dhcp snooping binding
+
+DHCP Snooping Rate-Limiting
+
+#conf t
+#int g0/1-3
+#ip dhcp snooping limit rate 1
+#errdisable recovery cause dhcp-rate-limit
+#exit
+#show errdisable recovery
+
+Dynamic ARP Inspection = DAI Configuration
+
+#conf t
+#ip arp inspection vlan 1
+#int range g0/0 - 1
+#ip arp inspection trust
+
+#show ip arp inspection interface
+
+DAI Rate Limiting
+
+#conf t
+#int range g0/1-2
+#ip arp inspection limit rate 25 burst interval 2
+#int  g0/3
+#ip arp inspection limit rate 10
+#exit
+#exit
+#show ip arp inspection interface
+
+Error disabled recovery
+
+#errdisable recovery cause arp-inspection
+#do show errdisable recovery
+
+DAI Optional Check
+
+#ip arp inspection validation {dst-mac | ip | src-mac}
+
+
+
+
+ACL - Standard Numbered ACL
+
+R1(config)#access-list (number) {deny | permit} ip wildcard-mask
+#access-list 1 deny 1.1.1.1 0.0.0.0
+or
+#access-list 1 deny 1.1.1.1  >>>>>>>>> same output as above
+or 
+#access-list 1 deny host 1.1.1.1 >>>>> same output as above 
+
+To allow all IP address
+#access-list 1 permit any
+or 
+#access-list 1 permit 0.0.0.0 255.255.255.255
+
+To add description for ACL
+#access-list 1 remark ## Blocking floor 1 from file server ##
+
+>en
+#show access-lists
+#show ip access-lists
+
+To apply ACL to an interface
+R1(config-if)#ip access-group (number) {in | out}
+
+Eg:
+R1(config)#access-list 1 permit 192.168.1.1
+#access-list 1 deny 192.168.1.0 0.0.0.255
+#access-list 1 permit any
+#int g0/2
+#ip access-group 1 out
+
+
+ACL - Standard Named ACL
+R1(config)#ip access-list standard (acl_name)
+#(seq-number) {deny | permit} ip wildcard-mask
+#ip access-list standard BLOCK_BOB
+#deny 1.1.1.1
+#permit any
+#remark ## CONFIGURED NOV 21 2020 ##
+#interface g0/0
+#ip access-group BLOCK_BOB in
+
+ACL - Stardard Named ACL with numbers
+#conf t
+#ip access-list standard 1
+#deny 192.168.1.1
+#permit any
+
+To delete the entry from the ACL list
+#conf t
+#ip access-list standard 1
+#do show access-lists
+#no 30 
+#no (particular acl entries sequence number)
+
+To add the entry from the ACL list
+#conf t
+#ip access-list standard 1
+#do show access-list
+#20 deny 192.168.4.0 0.0.0.255
+
+Re-sequencing ACL
+#conf t
+#ip access-list resequence (acl-id) (starting-seq-num) (increment value
+#ip access-list resequence 1 10 10
+#do show access-lists
+
+
+
+Extended Numbered ACL
+#conf t
+#access-list (number) {permit | deny} (protocol) (src-ip) (dest-ip)
+
+Extended Named ACL
+#conf t
+#ip access-list extended {name | number}
+#(seq number) {permit | deny} (protocol) (src-ip) (dest-ip)
+#{permit | deny} (protocol) (src-ip) (dest-ip)
+
+
+Matching the TCP/UDP ports numbers
+#conf t
+#ip access-list extended Study_Lab
+#deny tcp (src-ip) (eq|gt|lt|neq|range) (src-port-num) (dest-ip) (eq|gt|lt|neq|range) (dest-port-num)
+
+eq = equal to
+gt = greater than
+lt = less than
+neq = not equal to
+range = a range from x to y
+
+
+#conf t
+#ip access-list extended Study_Lab
+#deny tcp any host 1.1.1.1 eq 80
+
+
+ 
